@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SupplyChainPro - End-to-End Supply Chain Management System</title>
+    
+    <!-- Modern Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- RemixIcon CDN for crisp, modern icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+
+    <!-- Chart.js CDN for interactive supply chain analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+    <!-- App Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside id="appSidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-icon">
+                    <i class="ri-globe-line"></i>
+                </div>
+                <div class="brand-title">SupplyChain<span>Pro</span></div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Overview</div>
+                <a href="#/dashboard" class="nav-link active">
+                    <i class="ri-dashboard-3-line"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div class="nav-section-title">Operations & Sourcing</div>
+                <a href="#/suppliers" class="nav-link">
+                    <i class="ri-building-line"></i>
+                    <span>Supplier Management</span>
+                </a>
+                <a href="#/procurement" class="nav-link">
+                    <i class="ri-file-list-3-line"></i>
+                    <span>Procurement & POs</span>
+                </a>
+                <a href="#/inventory" class="nav-link">
+                    <i class="ri-archive-line"></i>
+                    <span>Inventory & Hubs</span>
+                </a>
+
+                <div class="nav-section-title">Fulfillment & Delivery</div>
+                <a href="#/orders" class="nav-link">
+                    <i class="ri-shopping-bag-3-line"></i>
+                    <span>Order Management</span>
+                </a>
+                <a href="#/logistics" class="nav-link">
+                    <i class="ri-truck-line"></i>
+                    <span>Logistics & Freight</span>
+                </a>
+
+                <div class="nav-section-title">Reports & Access</div>
+                <a href="#/analytics" class="nav-link">
+                    <i class="ri-line-chart-line"></i>
+                    <span>Analytics & Reports</span>
+                </a>
+                <a href="#/login" class="nav-link">
+                    <i class="ri-user-settings-line"></i>
+                    <span>Login / Register</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-mini-profile">
+                    <div id="sidebarUserAvatar" class="user-avatar-circle">AV</div>
+                    <div class="user-mini-details">
+                        <div id="sidebarUserName" class="user-mini-name">Alexander Vance</div>
+                        <div id="sidebarUserRole" class="user-mini-role">Supply Chain Director</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            <!-- Top Navigation Bar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="mobileMenuToggle" class="mobile-toggle-btn" onclick="window.router.toggleMobileMenu()" title="Toggle Menu">
+                        <i class="ri-menu-2-line"></i>
+                    </button>
+                    <div class="page-breadcrumb">
+                        <span>SupplyChainPro</span>
+                        <i class="ri-arrow-right-s-line"></i>
+                        <span id="breadcrumbCurrent" class="breadcrumb-active">Dashboard</span>
+                    </div>
+                </div>
+
+                <div class="topbar-search">
+                    <i class="ri-search-line"></i>
+                    <input type="text" placeholder="Global search POs, SKUs, tracking, suppliers..." 
+                           onkeydown="if(event.key === 'Enter') window.router.handleGlobalSearch(this.value)">
+                </div>
+
+                <div class="topbar-right">
+                    <!-- Dark Mode Toggle Button (Bonus Feature) -->
+                    <button class="icon-btn" onclick="window.router.toggleTheme()" title="Toggle Light / Dark Mode">
+                        <i id="themeToggleIcon" class="ri-moon-line"></i>
+                    </button>
+
+                    <!-- Alert Notifications Dropdown (Bonus Feature) -->
+                    <div style="position: relative;">
+                        <button id="notifToggleBtn" class="icon-btn" onclick="window.notifications.toggleDropdown()" title="Alert Notifications">
+                            <i class="ri-notification-3-line"></i>
+                            <span id="notifBadge" class="icon-badge">3</span>
+                        </button>
+
+                        <div id="notifDropdown" class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <h4>Alert Notifications</h4>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-secondary btn-sm" onclick="window.notifications.markAllAsRead()" style="font-size: 0.72rem; padding: 4px 8px;">
+                                        Mark read
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="notifList" class="dropdown-list">
+                                <!-- Populated dynamically by notifications.js -->
+                            </div>
+                            <div class="dropdown-footer">
+                                <button onclick="window.notifications.clearAll()">Clear all notifications</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Dropdown Menu -->
+                    <div style="position: relative;">
+                        <button id="userMenuBtn" class="user-menu-btn" onclick="window.auth.toggleUserDropdown()">
+                            <div id="topbarUserAvatar" class="user-avatar-circle" style="width: 38px; height: 38px;">AV</div>
+                            <div style="text-align: left;" class="hide-mobile">
+                                <div id="topbarUserName" style="font-size: 0.88rem; font-weight: 600; color: var(--text-primary); line-height: 1.2;">Alexander Vance</div>
+                                <div style="font-size: 0.72rem; color: var(--text-muted);">Executive</div>
+                            </div>
+                            <i class="ri-arrow-down-s-line" style="color: var(--text-muted);"></i>
+                        </button>
+
+                        <div id="userDropdown" class="dropdown-menu user-dropdown">
+                            <a class="user-dropdown-item" href="#/login">
+                                <i class="ri-user-line"></i> Profile / Switch User
+                            </a>
+                            <a class="user-dropdown-item" href="#/analytics">
+                                <i class="ri-bar-chart-box-line"></i> Performance Analytics
+                            </a>
+                            <div style="border-top: 1px solid var(--border-color); margin: 4px 0;"></div>
+                            <button class="user-dropdown-item" onclick="window.auth.logout()" style="width: 100%; border: none; background: none; color: var(--status-delayed); text-align: left;">
+                                <i class="ri-logout-box-r-line"></i> Sign Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dynamic Content Area -->
+            <main id="mainContent" class="content-area">
+                <!-- Renders modules dynamically via router -->
+            </main>
+        </div>
+    </div>
+
+    <!-- Application Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <!-- Feature Modules -->
+    <script src="js/modules/dashboard.js"></script>
+    <script src="js/modules/suppliers.js"></script>
+    <script src="js/modules/procurement.js"></script>
+    <script src="js/modules/inventory.js"></script>
+    <script src="js/modules/orders.js"></script>
+    <script src="js/modules/logistics.js"></script>
+    <script src="js/modules/analytics.js"></script>
+    <script src="js/modules/authView.js"></script>
+    
+    <!-- Main App Router & Initialization -->
+    <script src="js/app.js"></script>
+
+</body>
+</html>
+
